@@ -1,0 +1,6 @@
+# depslib dependency file v1.0
+1476728381 source:c:\users\dell1\dropbox\programowanie\opencv\ball_track\main.cpp
+	<iostream>
+	"opencv2/imgproc/imgproc.hpp"
+	"opencv2/highgui/highgui.hpp"
+
