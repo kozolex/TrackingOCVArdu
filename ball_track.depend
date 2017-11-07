@@ -4,3 +4,8 @@
 	"opencv2/imgproc/imgproc.hpp"
 	"opencv2/highgui/highgui.hpp"
 
+1510055637 source:c:\users\dell1\documents\github\trackingocvardu\main.cpp
+	<iostream>
+	"opencv2/imgproc/imgproc.hpp"
+	"opencv2/highgui/highgui.hpp"
+

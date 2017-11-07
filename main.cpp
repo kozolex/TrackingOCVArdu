@@ -86,7 +86,7 @@ int main( int argc, char** argv )
         double dArea = oMoments.m00;
 
         // if the area <= 10000, I consider that the there are no object in the image and it's because of the noise, the area is not zero
-        if (dArea > 10000)
+        if (dArea > 50000)
         {
             //calculate the position of the ball
             int posX = dM10 / dArea;
@@ -95,9 +95,10 @@ int main( int argc, char** argv )
             if (iLastX >= 0 && iLastY >= 0 && posX >= 0 && posY >= 0)
             {
                 //Draw a red line from the previous point to the current point
-                line(imgOriginal,Point(posX, posY),Point(posX, posY) , Scalar(0,0,255), 2);
-                circle(imgOriginal,Point(posX, posY), dArea, (0,0,255), -1);
-                putText(imgOriginal,format("(%d,%d)", posX,posY) ,Point(posX, posY), FONT_HERSHEY_SCRIPT_SIMPLEX, 0.5,(255,255,255),1,false);
+                line(imgOriginal,Point(posX, posY),Point(posX, posY) , Scalar(0,0,255), 3);
+                circle(imgOriginal,Point(posX, posY), dArea/100000, (0,255,0), -1);
+                //putText(imgOriginal,format("%f",dArea/10000) ,Point(15,15), FONT_HERSHEY_SIMPLEX, 0.5,(0,255,255),1,false);
+                putText(imgOriginal,format("(%d,%d)", posX,posY) ,Point(posX, posY), FONT_HERSHEY_SIMPLEX, 0.5,(255,255,255),1,false);
             }
 
             iLastX = posX;
