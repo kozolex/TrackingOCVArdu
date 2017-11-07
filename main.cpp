@@ -1,12 +1,70 @@
+#include <windows.h>
 #include <iostream>
 #include "opencv2/imgproc/imgproc.hpp"
 #include "opencv2/highgui/highgui.hpp"
 
+#include <sstream>
+
 using namespace cv;
 using namespace std;
 
+
+string IntToString (int a)
+{
+    ostringstream temp;
+    temp<<a;
+    return temp.str();
+}
+
 int main( int argc, char** argv )
 {
+    //SERIAL PORT
+    HANDLE hComm;
+    bool Status;
+
+    hComm = CreateFile("COM8",                //port name
+                       GENERIC_READ | GENERIC_WRITE, //Read/Write
+                       0,                            // No Sharing
+                       NULL,                         // No Security
+                       OPEN_EXISTING,// Open existing port only
+                       0,            // Non Overlapped I/O
+                       NULL);        // Null for Comm Devices
+
+    if (hComm == INVALID_HANDLE_VALUE)
+        cout<<"Error in opening serial port"<<endl;
+    else
+        cout<<"opening serial port successful"<<endl;
+
+
+    DCB dcbSerialParams = { 0 }; // Initializing DCB structure
+    dcbSerialParams.DCBlength = sizeof(dcbSerialParams);
+    Status = GetCommState(hComm, &dcbSerialParams);
+
+    dcbSerialParams.BaudRate = CBR_9600;  // Setting BaudRate = 9600
+    dcbSerialParams.ByteSize = 8;         // Setting ByteSize = 8
+    dcbSerialParams.StopBits = ONESTOPBIT;// Setting StopBits = 1
+    dcbSerialParams.Parity   = NOPARITY;  // Setting Parity = None
+
+    COMMTIMEOUTS timeouts = { 0 };
+    timeouts.ReadIntervalTimeout         = 500; // in milliseconds
+    timeouts.ReadTotalTimeoutConstant    = 500; // in milliseconds
+    timeouts.ReadTotalTimeoutMultiplier  = 100; // in milliseconds
+    timeouts.WriteTotalTimeoutConstant   = 50; // in milliseconds
+    timeouts.WriteTotalTimeoutMultiplier = 30; // in milliseconds
+
+
+    string lpBuffer;
+
+    DWORD dNoOFBytestoWrite;         // No of bytes to write into the port
+    DWORD dNoOfBytesWritten = 0;     // No of bytes written to the port
+    dNoOFBytestoWrite = sizeof(lpBuffer);
+/*
+    Status = WriteFile(hComm,        // Handle to the Serial port
+                       lpBuffer.c_str(),     // Data to be written to the port
+                       dNoOFBytestoWrite,  //No of bytes to write
+                       &dNoOfBytesWritten, //Bytes written
+                       NULL);
+*/
     VideoCapture cap(0); //capture the video from webcam
 
     if ( !cap.isOpened() )  // if not success, exit program
@@ -63,7 +121,7 @@ int main( int argc, char** argv )
             cout << "Cannot read a frame from video stream" << endl;
             break;
         }
-         cvtColor(imgOriginal, imgHSV, COLOR_BGR2HSV); //Convert the captured frame from BGR to HSV
+        cvtColor(imgOriginal, imgHSV, COLOR_BGR2HSV); //Convert the captured frame from BGR to HSV
 
         inRange(imgHSV, Scalar(iLowH, iLowS, iLowV), Scalar(iHighH, iHighS, iHighV), imgThresholded); //Threshold the image
 
@@ -95,10 +153,20 @@ int main( int argc, char** argv )
             if (iLastX >= 0 && iLastY >= 0 && posX >= 0 && posY >= 0)
             {
                 //Draw a red line from the previous point to the current point
-                line(imgOriginal,Point(posX, posY),Point(posX, posY) , Scalar(0,0,255), 3);
-                circle(imgOriginal,Point(posX, posY), dArea/100000, (0,255,0), -1);
-                //putText(imgOriginal,format("%f",dArea/10000) ,Point(15,15), FONT_HERSHEY_SIMPLEX, 0.5,(0,255,255),1,false);
-                putText(imgOriginal,format("(%d,%d)", posX,posY) ,Point(posX, posY), FONT_HERSHEY_SIMPLEX, 0.5,(255,255,255),1,false);
+                line(imgOriginal,Point(posX, posY),Point(posX, posY), Scalar(0,0,255), 3);
+                //circle(imgOriginal,Point(posX, posY), dArea/100000, (0,255,0), -1);
+                //putText(imgOriginal,lpBuffer ,Point(15,15), FONT_HERSHEY_SIMPLEX, 0.5,(0,255,255),1,false);
+                putText(imgOriginal,format("(%d,%d)", posX,posY),Point(posX, posY), FONT_HERSHEY_SIMPLEX, 0.5,(255,255,255),1,false);
+
+                lpBuffer = IntToString(posX/3.6)+"\n";
+                //cout<<lpBuffer;
+                cout<<lpBuffer.c_str();
+
+                Status = WriteFile(hComm,        // Handle to the Serial port
+                                   lpBuffer.c_str(),     // Data to be written to the port
+                                   dNoOFBytestoWrite,  //No of bytes to write
+                                   &dNoOfBytesWritten, //Bytes written
+                                   NULL);
             }
 
             iLastX = posX;
@@ -117,4 +185,6 @@ int main( int argc, char** argv )
     }
 
     return 0;
+    CloseHandle(hComm);//Closing the Serial Port
+    //END SERIAL PORT
 }
