@@ -58,13 +58,13 @@ int main( int argc, char** argv )
     DWORD dNoOFBytestoWrite;         // No of bytes to write into the port
     DWORD dNoOfBytesWritten = 0;     // No of bytes written to the port
     dNoOFBytestoWrite = sizeof(lpBuffer);
-/*
-    Status = WriteFile(hComm,        // Handle to the Serial port
-                       lpBuffer.c_str(),     // Data to be written to the port
-                       dNoOFBytestoWrite,  //No of bytes to write
-                       &dNoOfBytesWritten, //Bytes written
-                       NULL);
-*/
+    /*
+        Status = WriteFile(hComm,        // Handle to the Serial port
+                           lpBuffer.c_str(),     // Data to be written to the port
+                           dNoOFBytestoWrite,  //No of bytes to write
+                           &dNoOfBytesWritten, //Bytes written
+                           NULL);
+    */
     VideoCapture cap(0); //capture the video from webcam
 
     if ( !cap.isOpened() )  // if not success, exit program
@@ -110,6 +110,10 @@ int main( int argc, char** argv )
 
     Mat imgHSV;
     Mat imgThresholded;
+    Mat canny_output;
+    vector<vector<Point> > contours;
+    vector<Vec4i> hierarchy;
+    RNG rng(12345);
     while (true)
     {
         Mat imgOriginal;
@@ -135,6 +139,9 @@ int main( int argc, char** argv )
             dilate( imgThresholded, imgThresholded, getStructuringElement(MORPH_ELLIPSE, Size(sizeEroDil, sizeEroDil)) );
             erode(imgThresholded, imgThresholded, getStructuringElement(MORPH_ELLIPSE, Size(sizeEroDil, sizeEroDil)) );
         }
+        Canny( imgThresholded, canny_output, 100, 100*2, 3 );
+        findContours( canny_output, contours, hierarchy, CV_RETR_TREE, CV_CHAIN_APPROX_SIMPLE, Point(0, 0) );
+        drawContours( imgOriginal, contours, 0, Scalar( rng.uniform(0, 255), rng.uniform(0,255), rng.uniform(0,255) ), 2, 8, hierarchy, 0, Point() );
 
         //Calculate the moments of the thresholded image
         Moments oMoments = moments(imgThresholded);
@@ -156,7 +163,7 @@ int main( int argc, char** argv )
                 line(imgOriginal,Point(posX, posY),Point(posX, posY), Scalar(0,0,255), 3);
                 //circle(imgOriginal,Point(posX, posY), dArea/100000, (0,255,0), -1);
                 //putText(imgOriginal,lpBuffer ,Point(15,15), FONT_HERSHEY_SIMPLEX, 0.5,(0,255,255),1,false);
-                putText(imgOriginal,format("(%d,%d)", posX,posY),Point(posX, posY), FONT_HERSHEY_SIMPLEX, 0.5,(255,255,255),1,false);
+                putText(imgOriginal,format("(%d,%d)", posX,posY),Point(10, 10), FONT_HERSHEY_SIMPLEX, 0.5,(255,255,255),1,false);
 
                 lpBuffer = IntToString(posX/3.6)+"\n";
                 //cout<<lpBuffer;
