@@ -1,7 +1,8 @@
-#include <windows.h>
+//#include <windows.h>
 #include <iostream>
 #include "opencv2/imgproc/imgproc.hpp"
 #include "opencv2/highgui/highgui.hpp"
+#include <serialport.h>
 
 #include <sstream>
 
@@ -16,55 +17,24 @@ string IntToString (int a)
     return temp.str();
 }
 
+
+//String for getting the output from arduino
+char output[MAX_DATA_LENGTH];
+//String for incoming data
+char incomingData[MAX_DATA_LENGTH];
+
+string input_string;
+
+/*Portname must contain these backslashes, and remember to
+replace the following com port*/
+char *port_name = "\\\\.\\COM8";
+
 int main( int argc, char** argv )
 {
-    //SERIAL PORT
-    HANDLE hComm;
-    bool Status;
+    SerialPort arduino(port_name);
+    if (arduino.isConnected()) cout << "Connection Established" << endl;
+    else cout << "ERROR, check port name";
 
-    hComm = CreateFile("COM8",                //port name
-                       GENERIC_READ | GENERIC_WRITE, //Read/Write
-                       0,                            // No Sharing
-                       NULL,                         // No Security
-                       OPEN_EXISTING,// Open existing port only
-                       0,            // Non Overlapped I/O
-                       NULL);        // Null for Comm Devices
-
-    if (hComm == INVALID_HANDLE_VALUE)
-        cout<<"Error in opening serial port"<<endl;
-    else
-        cout<<"opening serial port successful"<<endl;
-
-
-    DCB dcbSerialParams = { 0 }; // Initializing DCB structure
-    dcbSerialParams.DCBlength = sizeof(dcbSerialParams);
-    Status = GetCommState(hComm, &dcbSerialParams);
-
-    dcbSerialParams.BaudRate = CBR_9600;  // Setting BaudRate = 9600
-    dcbSerialParams.ByteSize = 8;         // Setting ByteSize = 8
-    dcbSerialParams.StopBits = ONESTOPBIT;// Setting StopBits = 1
-    dcbSerialParams.Parity   = NOPARITY;  // Setting Parity = None
-
-    COMMTIMEOUTS timeouts = { 0 };
-    timeouts.ReadIntervalTimeout         = 500; // in milliseconds
-    timeouts.ReadTotalTimeoutConstant    = 500; // in milliseconds
-    timeouts.ReadTotalTimeoutMultiplier  = 100; // in milliseconds
-    timeouts.WriteTotalTimeoutConstant   = 50; // in milliseconds
-    timeouts.WriteTotalTimeoutMultiplier = 30; // in milliseconds
-
-
-    string lpBuffer;
-
-    DWORD dNoOFBytestoWrite;         // No of bytes to write into the port
-    DWORD dNoOfBytesWritten = 0;     // No of bytes written to the port
-    dNoOFBytestoWrite = sizeof(lpBuffer);
-    /*
-        Status = WriteFile(hComm,        // Handle to the Serial port
-                           lpBuffer.c_str(),     // Data to be written to the port
-                           dNoOFBytestoWrite,  //No of bytes to write
-                           &dNoOfBytesWritten, //Bytes written
-                           NULL);
-    */
     VideoCapture cap(0); //capture the video from webcam
 
     if ( !cap.isOpened() )  // if not success, exit program
@@ -165,15 +135,20 @@ int main( int argc, char** argv )
                 //putText(imgOriginal,lpBuffer ,Point(15,15), FONT_HERSHEY_SIMPLEX, 0.5,(0,255,255),1,false);
                 putText(imgOriginal,format("(%d,%d)", posX,posY),Point(10, 10), FONT_HERSHEY_SIMPLEX, 0.5,(255,255,255),1,false);
 
-                lpBuffer = IntToString(posX/3.6)+"\n";
-                //cout<<lpBuffer;
-                cout<<lpBuffer.c_str();
+                input_string = IntToString(posX/8);
+                cout<<input_string<<endl;
+                //Creating a c string
+                char *c_string = new char[input_string.size() + 1];
+                //copying the std::string to c string
+                copy(input_string.begin(), input_string.end(), c_string);
+                //Adding the delimiter
+                c_string[input_string.size()] = '\n';
+                //Writing string to arduino
+                cout<<c_string;
+                arduino.writeSerialPort(c_string, MAX_DATA_LENGTH);
 
-                Status = WriteFile(hComm,        // Handle to the Serial port
-                                   lpBuffer.c_str(),     // Data to be written to the port
-                                   dNoOFBytestoWrite,  //No of bytes to write
-                                   &dNoOfBytesWritten, //Bytes written
-                                   NULL);
+
+
             }
 
             iLastX = posX;
@@ -192,6 +167,5 @@ int main( int argc, char** argv )
     }
 
     return 0;
-    CloseHandle(hComm);//Closing the Serial Port
-    //END SERIAL PORT
+
 }
