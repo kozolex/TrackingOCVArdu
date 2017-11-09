@@ -2,7 +2,7 @@
 #define SERIALPORT_H
 
 #define ARDUINO_WAIT_TIME 100
-#define MAX_DATA_LENGTH 8
+#define MAX_DATA_LENGTH 1
 
 #include <windows.h>
 #include <stdio.h>

@@ -17,14 +17,6 @@ string IntToString (int a)
     return temp.str();
 }
 
-
-//String for getting the output from arduino
-char output[MAX_DATA_LENGTH];
-//String for incoming data
-char incomingData[MAX_DATA_LENGTH];
-
-string input_string;
-
 /*Portname must contain these backslashes, and remember to
 replace the following com port*/
 char *port_name = "\\\\.\\COM8";
@@ -84,6 +76,9 @@ int main( int argc, char** argv )
     vector<vector<Point> > contours;
     vector<Vec4i> hierarchy;
     RNG rng(12345);
+    int posXOld;
+    string input_string;
+
     while (true)
     {
         Mat imgOriginal;
@@ -135,17 +130,21 @@ int main( int argc, char** argv )
                 //putText(imgOriginal,lpBuffer ,Point(15,15), FONT_HERSHEY_SIMPLEX, 0.5,(0,255,255),1,false);
                 putText(imgOriginal,format("(%d,%d)", posX,posY),Point(10, 10), FONT_HERSHEY_SIMPLEX, 0.5,(255,255,255),1,false);
 
-                input_string = IntToString(posX/8);
-                cout<<input_string<<endl;
-                //Creating a c string
-                char *c_string = new char[input_string.size() + 1];
-                //copying the std::string to c string
-                copy(input_string.begin(), input_string.end(), c_string);
-                //Adding the delimiter
-                c_string[input_string.size()] = '\n';
-                //Writing string to arduino
-                cout<<c_string;
-                arduino.writeSerialPort(c_string, MAX_DATA_LENGTH);
+                if (posXOld != posX)
+                {
+                    input_string = IntToString(posX/8);
+                    cout<<input_string<<endl;
+                    //Creating a c string
+                    char *c_string = new char[input_string.size() + 1];
+                    //copying the std::string to c string
+                    copy(input_string.begin(), input_string.end(), c_string);
+                    //Adding the delimiter
+                    c_string[input_string.size()] = '\n';
+                    //Writing string to arduino
+                    cout<<c_string;
+                    arduino.writeSerialPort(c_string, MAX_DATA_LENGTH);
+                }
+
 
 
 

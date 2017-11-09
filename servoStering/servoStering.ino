@@ -15,14 +15,15 @@ void setup()
         lcd.begin();
     lcd.backlight();
 }
-
+char buffer[8];
 void loop() 
 { 
+  
   if(Serial.available() > 0) { //Czy Arduino odebrano dane
-    odebraneDane = Serial.readStringUntil('\n'); //Jeśli tak, to odczytaj je do znaku końca linii i zapisz w zmiennej odebraneDane
+   Serial.readBytesUntil('\n',buffer,3); //Jeśli tak, to odczytaj je do znaku końca linii i zapisz w zmiennej odebraneDane
     //Serial.println("Send -> " + odebraneDane ); //Wyświetl komunikat
     lcd.setCursor(0,0);
-    lcd.print(odebraneDane);
+    lcd.print(*buffer);
     
       val=odebraneDane.toInt();
   if (val==170) val=10;  // scale it to use it with the servo (value between 0 and 180) 
