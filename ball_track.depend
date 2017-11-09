@@ -4,11 +4,11 @@
 	"opencv2/imgproc/imgproc.hpp"
 	"opencv2/highgui/highgui.hpp"
 
-1510143811 source:c:\users\dell1\documents\github\trackingocvardu\main.cpp
+1510145568 source:c:\users\dell1\documents\github\trackingocvardu\main.cpp
+	<windows.h>
 	<iostream>
 	"opencv2/imgproc/imgproc.hpp"
 	"opencv2/highgui/highgui.hpp"
-	<serialport.h>
 	<sstream>
 
 1510141641 source:c:\users\dell1\documents\github\trackingocvardu\src\serialport.cpp

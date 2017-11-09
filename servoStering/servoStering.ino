@@ -22,18 +22,14 @@ void loop()
     odebraneDane = Serial.readStringUntil('\n'); //Jeśli tak, to odczytaj je do znaku końca linii i zapisz w zmiennej odebraneDane
     //Serial.println("Send -> " + odebraneDane ); //Wyświetl komunikat
     lcd.setCursor(0,0);
-    lcd.print("                     ");
-    lcd.setCursor(0,0);
     lcd.print(odebraneDane);
     
-    val=odebraneDane.toInt();
+      val=odebraneDane.toInt();
   if (val==170) val=10;  // scale it to use it with the servo (value between 0 and 180) 
   myservo.write(val);   // sets the servo position according to the scaled value 
   }
-
-  // reads the value of the potentiometer (value between 0 and 1023) 
+             // reads the value of the potentiometer (value between 0 and 1023) 
 
   
-  delay(30);                           // waits for the servo to get there 
+  //delay(30);                           // waits for the servo to get there 
 } 
-
