@@ -38,15 +38,15 @@ int main( int argc, char** argv )
     namedWindow("Control", CV_WINDOW_AUTOSIZE); //create a window called "Control"
 
     int iLowH = 10;
-    int iHighH = 39;
+    int iHighH = 29;
 
-    int iLowS = 25;
+    int iLowS = 129;
     int iHighS = 255;
 
-    int iLowV = 191;
+    int iLowV = 180;
     int iHighV = 255;
 
-    int sizeEroDil = 10;
+    int sizeEroDil = 9;
 
     //Create trackbars in "Control" window
     createTrackbar("LowH", "Control", &iLowH, 179); //Hue (0 - 179)
@@ -130,18 +130,18 @@ int main( int argc, char** argv )
                 //putText(imgOriginal,lpBuffer ,Point(15,15), FONT_HERSHEY_SIMPLEX, 0.5,(0,255,255),1,false);
                 putText(imgOriginal,format("(%d,%d)", posX,posY),Point(10, 10), FONT_HERSHEY_SIMPLEX, 0.5,(255,255,255),1,false);
 
-                if (posXOld != posX)
+                if (input_string != IntToString(posX/3.55)+"\n")
                 {
-                    input_string = IntToString(posX/8);
+                    input_string = IntToString(posX/3.55)+"\n";
                     cout<<input_string<<endl;
                     //Creating a c string
-                    char *c_string = new char[input_string.size() + 1];
+                    char *c_string = new char[input_string.size()];
                     //copying the std::string to c string
-                    copy(input_string.begin(), input_string.end(), c_string);
-                    //Adding the delimiter
-                    c_string[input_string.size()] = '\n';
+                    //copy(input_string.begin(), input_string.end(), c_string);
+
+                    for (int i=0; i<=input_string.size(); i++) c_string[i]=input_string[i];
                     //Writing string to arduino
-                    cout<<c_string;
+                     for (int i=0; i<=input_string.size(); i++)cout<<c_string[i];
                     arduino.writeSerialPort(c_string, MAX_DATA_LENGTH);
                 }
 
