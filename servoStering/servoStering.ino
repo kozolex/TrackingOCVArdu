@@ -14,29 +14,29 @@ void setup()
     Serial.begin(9600); //Uruchomienie komunikacji
         lcd.begin();
     lcd.backlight();
+    //Serial.setTimeout(30);
 }
-
+int i=0;
 void loop() 
 { 
   if(Serial.available() > 0) { //Czy Arduino odebrano dane
-  //Serial.readBytesUntil('\n', buffer, 8);
     odebraneDane = Serial.readStringUntil('\n'); //Jeśli tak, to odczytaj je do znaku końca linii i zapisz w zmiennej odebraneDane
-    //Serial.println("Send -> " + odebraneDane ); //Wyświetl komunikat
-    lcd.setCursor(0,0);
-    //lcd.print(buffer);
-    for (int i=0; i<=4; i++)
-    {
-    lcd.print(i);
-    lcd.print(" ");
-    lcd.print(odebraneDane[i]);
-    }
     
-      val=odebraneDane.toInt();
-  if (val==170) val=10;  // scale it to use it with the servo (value between 0 and 180) 
-  myservo.write(val);   // sets the servo position according to the scaled value 
+    Serial.println("Send -> " + odebraneDane ); //Wyświetl komunikat
+        lcd.setCursor(0,i);
+    lcd.print(odebraneDane);
+    /*lcd.setCursor(0,i);
+    lcd.print("                    ");
+    lcd.setCursor(0,i);
+    lcd.print(odebraneDane);
+    if (i==4) i=0;
+    else i++;*/
   }
              // reads the value of the potentiometer (value between 0 and 1023) 
-
+  val=odebraneDane.toInt();
+  if (val==170) val=10;  // scale it to use it with the servo (value between 0 and 180) 
+  myservo.write(val);   // sets the servo position according to the scaled value 
   
-  //delay(30);                           // waits for the servo to get there 
+  delay(30);                           // waits for the servo to get there 
 } 
+
