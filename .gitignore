@@ -48,3 +48,9 @@ Temporary Items
 .apdisk
 .bin
 .obj
+*.exe
+bin/Debug/ball_track.exe
+*.layout
+bin/Debug/ball_track.exe
+ball_track.layout
+*.exe

@@ -27,6 +27,7 @@ int main( int argc, char** argv )
     if (arduino.isConnected()) cout << "Connection Established" << endl;
     else cout << "ERROR, check port name";
 
+
     VideoCapture cap(0); //capture the video from webcam
 
     if ( !cap.isOpened() )  // if not success, exit program
@@ -130,23 +131,17 @@ int main( int argc, char** argv )
                 //putText(imgOriginal,lpBuffer ,Point(15,15), FONT_HERSHEY_SIMPLEX, 0.5,(0,255,255),1,false);
                 putText(imgOriginal,format("(%d,%d)", posX,posY),Point(10, 10), FONT_HERSHEY_SIMPLEX, 0.5,(255,255,255),1,false);
 
-                if (input_string != IntToString(posX/3.55)+"\n")
-                {
-                    input_string = IntToString(posX/3.55)+"\n";
-                    cout<<input_string<<endl;
+                    //input_string = IntToString(posX/3.55) + '\n';
+                    //input_string = "2\n";
+                    //cout<<input_string;
                     //Creating a c string
-                    char *c_string = new char[input_string.size()];
+                    //char c_string[input_string.size()];
                     //copying the std::string to c string
                     //copy(input_string.begin(), input_string.end(), c_string);
-
-                    for (int i=0; i<=input_string.size(); i++) c_string[i]=input_string[i];
                     //Writing string to arduino
-                     for (int i=0; i<=input_string.size(); i++)cout<<c_string[i];
-                    arduino.writeSerialPort(c_string, MAX_DATA_LENGTH);
-                }
-
-
-
+                    //arduino.writeSerialPort(c_string, MAX_DATA_LENGTH);
+                    char c_string[10]={'0','1','2','\n'};
+    arduino.writeSerialPort(c_string, MAX_DATA_LENGTH);
 
             }
 
