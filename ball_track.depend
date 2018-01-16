@@ -19,3 +19,18 @@
 	<stdio.h>
 	<stdlib.h>
 
+1516092782 source:c:\users\mk\documents\github\trackingocvardu\main.cpp
+	<iostream>
+	"opencv2/imgproc/imgproc.hpp"
+	"opencv2/highgui/highgui.hpp"
+	<serialport.h>
+	<sstream>
+
+1516092782 c:\users\mk\documents\github\trackingocvardu\include\serialport.h
+	<windows.h>
+	<stdio.h>
+	<stdlib.h>
+
+1516092782 source:c:\users\mk\documents\github\trackingocvardu\src\serialport.cpp
+	"SerialPort.h"
+
