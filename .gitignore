@@ -54,3 +54,5 @@ bin/Debug/ball_track.exe
 bin/Debug/ball_track.exe
 ball_track.layout
 *.exe
+*.exe
+*.o
